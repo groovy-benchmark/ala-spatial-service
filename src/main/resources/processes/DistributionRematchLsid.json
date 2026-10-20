@@ -1,0 +1,32 @@
+{
+  "name": "DistributionRematchLsid",
+  "description": "Performs import of distribution shapefile into layers db",
+  "isBackground": false,
+  "version": 1.0,
+  "private": {
+    "unique": true,
+    "isPublic": false
+  },
+  "input": {
+    "sandboxBiocacheServiceUrl": {
+      "description": "sandbox biocacheServiceUrl for name matching",
+      "type": "auto"
+    },
+    "biocacheServiceUrl": {
+      "description": "biocacheServiceUrl for name matching when there is no sandboxBiocacheServiceUrl",
+      "type": "auto"
+    },
+    "updateAll": {
+      "description": "Update all LSIDs, not only search for missing LSIDs.",
+      "type": "boolean",
+      "constraints": {
+        "defaultValue": false
+      }
+    }
+  },
+  "output": {
+    "sql": {
+      "description": "layersdb.distributions update sql for lsids"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "queue": {
+    "user": {
+      "total": 4,
+      "pool": {
+        "admin": 1000
+      }
+    },
+    "adminLowPriority": {
+      "total": 4,
+      "pool": {
+        "user": 1000
+      }
+    },
+    "admin": {
+      "total": 4,
+      "pool": {
+        "user": 1000,
+        "LayerDistancesCreateOne": 1000,
+        "TabulationCreateOne": 1000
+      }
+    }
+  }
+}

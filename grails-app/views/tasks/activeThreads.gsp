@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="layout" content="ala-main">
+    <title>Active tasks</title>
+    <g:set var="baseUrl" value="${request.scheme}://${request.serverName}:${request.serverPort}${request.contextPath}" />
+    <meta name="breadcrumbs" content="${g.createLink(uri: baseUrl)}, Spatial Service"/>
+    <script src="${resource(dir: 'js', file: 'jquery.js')}"></script>
+    <script src="${resource(dir: 'js', file: 'datatables.min.js')}"></script>
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'datatables.min.css')}" type="text/css">
+</head>
+
+<body class="fluid">
+
+<div class="row" style="margin-left: 15px; margin-right: 15px;">
+    <div class="col-lg-8">
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h4 class="card-title mb-0">Navigation</h4>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li><g:link controller="manageLayers" action="uploads">Show all uploads</g:link></li>
+                    <li><g:link controller="manageLayers" action="layers">Show all Layers</g:link></li>
+                    <li><g:link controller="tasks" action="all">Show all Tasks</g:link></li>
+                    <li><g:link controller="tasks" action="index">Show active Tasks</g:link></li>
+                    <li><g:link controller="manageLayers" action="remote">Copy Layers from remote server</g:link></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="list-task" class="content scaffold-list" role="main">
+    <table class="table table-bordered table-striped" name="tasks">
+        <thead>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Log</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th>Active thread</th>
+        <th>Action</th>
+        </thead>
+        <tbody>
+        <g:set var="status" value="${["Queued", "Running", "Cancelled", "Error", "Successful"]}"></g:set>
+        <g:each in="${tasks}" status="i" var="task">
+            <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
+                <td><g:link action="show"
+                            id="${task.taskId}">${task.taskId}</g:link></td>
+
+                <td>${task.name}</td>
+                <td><g:each in="${task.history}" var="h">
+                    <g:formatDate date="${h.key}" format="dd/MM/yy hh:mm:ss"/>=${h.value}<br/>
+                </g:each></td>
+                <g:if test="${task.status}">
+                    <td>${status[task.status.toInteger()]}</td>
+                </g:if>
+                <g:else>
+                    <td>None</td>
+                </g:else>
+
+                <td><g:formatDate date="${task.created}" format="yyyy-MM-dd hh:mm:ss"/></td>
+                <td><g:formatDate date="${task.activeThread}" format="yyyy-MM-dd hh:mm:ss"/></td>
+
+                <td>
+                    <g:link action="uiCancel" class="btn btn-sm btn-default btn-outline-dark" id="${task.taskId}"
+                            params="${params}">cancel</g:link>
+                </td>
+            </tr>
+        </g:each>
+        </tbody>
+    </table>
+
+    <b>The purpose of this page is to identify abnormal tasks, e.g. the thread is completed but the status of this task still remain 'running'</b>
+    <li>Check "active thread" column. If the column is empty, it indicates the thread attached to this task is completed or not started yet.</li>
+    <li>Compare the time of 'Created' with current timestamp, if they are very close, it is very likely that the thread is not started yet.</li>
+    <li>If time of "Created" is much earlier than current timestamp, it is very likely the related thread is completed but the status of task is not updated properly.</li>
+    <li>If no logs or status or created time, but 'Active thread' exists, it means the task may be manually interrupted and the thread is an orphan thread.</li>
+</div>
+</body>
+</html>
